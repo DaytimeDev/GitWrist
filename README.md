@@ -17,6 +17,7 @@ This project is made using [Jetpack Compose](https://developer.android.com/compo
 * View basic account details such as your username
 * View some stats (WIP) like account age, public repos and followers
 * View unread notifications and mark them as read from the watch
+* Uses `Material 3 Expressive`! The new UI library for Android, check it out here: [MUI3Expressive](https://www.youtube.com/watch?v=n17dnMChX14)
 
 Right now the app does not show private repos since `read-only` access doesn't seem possible, which for security we will not allow the app to have write access
 
