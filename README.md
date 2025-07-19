@@ -39,6 +39,7 @@ Download the APK file from: [GitWear/Releases](https://github.com/DaytimeDev/Git
 #### *Enable Developer Options*
 
 If you don't have developer options enabled, enable them by clicking the build number on your device about page numerous times until you get a message titled `"You are now a developer"`
+(Some watches this may be different and you enable developer options a different way)
 
 Go into the `Developer Options` of your device, turn *on* `ADB Debugging`
 if you can plug into your PC, use USB Debugging, otherwise just use Wireless *(Make sure you are on the same Wi-Fi network)*
