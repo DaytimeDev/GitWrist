@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -46,6 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -62,10 +64,21 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.wear.compose.foundation.AnchorType
+import androidx.wear.compose.foundation.CurvedAlignment
+import androidx.wear.compose.foundation.CurvedDirection
+import androidx.wear.compose.foundation.CurvedLayout
+import androidx.wear.compose.foundation.CurvedModifier
+import androidx.wear.compose.foundation.CurvedScope
+import androidx.wear.compose.foundation.background
+import androidx.wear.compose.foundation.curvedRow
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
+import androidx.wear.compose.foundation.padding
+import androidx.wear.compose.foundation.sizeIn
 import androidx.wear.compose.material3.AlertDialog
 import androidx.wear.compose.material3.AlertDialogDefaults
+import androidx.wear.compose.material3.AlertDialogDefaults.contentPadding
 import androidx.wear.compose.material3.Button
 import androidx.wear.compose.material3.ButtonDefaults
 import androidx.wear.compose.material3.CompactButton
@@ -73,6 +86,8 @@ import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScrollIndicator
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.TimeText
+import androidx.wear.compose.material3.TimeTextDefaults
+import androidx.wear.compose.material3.curvedText
 import coil.compose.AsyncImage
 import com.example.watchappgesture.presentation.Github.GitHubNotification
 import com.example.watchappgesture.presentation.Github.GitHubUser
@@ -201,9 +216,33 @@ fun WearApp() {
         }
 
         TimeText()
+        val versionName = context.packageManager
+            .getPackageInfo(context.packageName, 0).versionName
+
+        CurvedLayout(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = 8.dp),
+            anchor = 90f, // Anchor at the bottom
+            anchorType = AnchorType.Center,
+        ) {
+            curvedRow(
+                modifier =
+                    CurvedModifier
+                        .sizeIn(0f, 70f)
+                        .background(color = Color(0xFFFFC107), StrokeCap.Round),
+            ) {
+                curvedText(
+                    text = "GitWrist V$versionName",
+                    color = Color.Black,
+                    fontSize = 10.sp,
+                    // Flip the text to be readable on a round watch face
+                    angularDirection = CurvedDirection.Angular.CounterClockwise
+                )
+            }
+        }
     }
 }
-
 
 @Composable
 fun SingleButtonDialog(
@@ -347,7 +386,7 @@ fun UserProfileScreen(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             state = listState,
-            userScrollEnabled = !showNotifications, // Stop the notifications from preventing scrolling when closed
+            userScrollEnabled = !showNotifications && !shareAccountQR, // Stop scrolling when notifications or QR are visible
         ) {
             item {
                 AsyncImage(
@@ -527,7 +566,8 @@ fun NotificationScreen(onDismiss: () -> Unit, token: String) {
             println("Error fetching notifications: ${e.message}")
             DialogState.dialogVisible = true
             DialogState.dialogTitle = "Uh oh..."
-            DialogState.dialogDescription = "Failed to load notifications. That's not great.\n\nError: ${e.message}"
+            DialogState.dialogDescription =
+                "Failed to load notifications. That's not great.\n\nError: ${e.message}"
             // Call on dismiss to close the notification screen
             onDismiss()
         }
@@ -604,15 +644,16 @@ fun NotificationScreen(onDismiss: () -> Unit, token: String) {
                     ) {
                         Column(modifier = Modifier.padding(10.dp)) {
                             Text(
-                                text = notification.subject.title,
-                                color = MaterialTheme.colorScheme.primary,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
                                 text = notification.subject.type,
                                 color = Color.Gray,
-                                fontSize = 10.sp
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                            )
+                            Text(
+                                text = notification.subject.title,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold
                             )
                             Text(
                                 text = notification.repository.fullName,
@@ -626,7 +667,6 @@ fun NotificationScreen(onDismiss: () -> Unit, token: String) {
                                 color = Color.Gray,
                                 fontSize = 10.sp
                             )
-                            // if show buttons
                             if (showButtons) {
                                 // Mark as read button
                                 var markAsReadRequested by remember { mutableStateOf(false) }
@@ -652,7 +692,7 @@ fun NotificationScreen(onDismiss: () -> Unit, token: String) {
                                     }
                                 }
                                 CompactButton(
-                                    enabled = markAsReadRequested,
+                                    enabled = !markAsReadRequested,
                                     onClick = {
                                         println("Marking notification as read: ${notification.id}")
                                         markAsReadRequested = true
