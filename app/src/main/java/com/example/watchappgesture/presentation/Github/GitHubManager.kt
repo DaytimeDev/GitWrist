@@ -1,5 +1,20 @@
 package com.example.watchappgesture.presentation.Github
 
+import android.graphics.Bitmap
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.set
+import coil.compose.AsyncImage
+import com.example.watchappgesture.presentation.primaryColorHex
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.MultiFormatWriter
+import com.google.zxing.common.BitMatrix
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
@@ -76,5 +91,42 @@ suspend fun markNotificationAsRead(token: String, notificationId: String) {
         client.newCall(request).execute().use { response ->
             if (!response.isSuccessful) throw Exception("Unexpected code $response")
         }
+    }
+}
+
+
+fun generateQrCode(content: String?, size: Int = 512): Bitmap {
+    val bitMatrix: BitMatrix = MultiFormatWriter().encode(
+        content,
+        BarcodeFormat.QR_CODE,
+        size,
+        size
+    )
+
+    val bmp = createBitmap(size, size, Bitmap.Config.RGB_565)
+    for (x in 0 until size) {
+        for (y in 0 until size) {
+            bmp[x, y] =
+                if (bitMatrix[x, y]) primaryColorHex.toInt() else android.graphics.Color.BLACK
+        }
+    }
+    return bmp
+}
+
+
+@Composable
+fun QRPreview(url: String?, modifier: Modifier) {
+    val qrCodeBitmap by produceState<Bitmap?>(initialValue = null, url) {
+        value = withContext(Dispatchers.Default) { generateQrCode(url, 512) }
+    }
+    Box(
+        modifier = modifier
+    )
+    {
+        AsyncImage(
+            model = qrCodeBitmap,
+            contentDescription = "QR Code",
+            modifier = Modifier.size(400.dp)
+        )
     }
 }
