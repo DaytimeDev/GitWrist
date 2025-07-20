@@ -9,7 +9,6 @@ data class GitHubNotification(
     @Json(name = "unread") val unread: Boolean,
     @Json(name = "reason") val reason: String,
     @Json(name = "updated_at") val updatedAt: String,
-    @Json(name = "last_read_at") val lastReadAt: String,
     val subject: Subject,
     @Json(name = "repository") val repository: Repository,
     @Json(name = "url") val url: String,

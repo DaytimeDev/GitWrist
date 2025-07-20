@@ -7,6 +7,7 @@ package com.example.watchappgesture.presentation
 
 //noinspection SuspiciousImport
 import android.Manifest
+import android.R
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -33,6 +34,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonColors
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.rememberSwipeToDismissBoxState
@@ -54,6 +58,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.createBitmap
@@ -67,6 +72,8 @@ import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.material.Colors
 import androidx.wear.compose.material3.AlertDialog
+import androidx.wear.compose.material3.AlertDialogDefaults
+import androidx.wear.compose.material3.Button
 import androidx.wear.compose.material3.ButtonDefaults
 import androidx.wear.compose.material3.CompactButton
 import androidx.wear.compose.material3.MaterialTheme
@@ -224,17 +231,24 @@ fun SingleButtonDialog(
         text = {
             Text(text = description)
         },
-        confirmButton = {
-            CompactButton(
-                onClick = onDismiss,
-                // Colors from the material theme
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
+        confirmButton = { },
+        dismissButton = {
+            AlertDialogDefaults.DismissButton(
+                colors = androidx.wear.compose.material3.IconButtonDefaults.iconButtonColors(
+                    contentColor = Color.Black,
+                    containerColor = Color(0xFF00FA9A)
                 ),
+                onClick = onDismiss,
+                content = {
+                    Icon(
+                        painter = androidx.compose.ui.res.painterResource(id = R.drawable.ic_menu_close_clear_cancel),
+                        contentDescription = "Dismiss",
+                        tint = Color.Black,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
             )
-        },
-        dismissButton = { DialogState.dialogDismissButton }
+        }
     )
 }
 
@@ -513,10 +527,20 @@ fun NotificationScreen(onDismiss: () -> Unit, token: String) {
     var isLoading by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
-        notifications = getUserNotifications(token)
-        isLoading = false
-        println("Got notifications: ${notifications.size}")
-        println("Notifications: $notifications")
+        try {
+            notifications = getUserNotifications(token)
+            isLoading = false
+            println("Got notifications: ${notifications.size}")
+            println("Notifications: $notifications")
+        } catch (e: Exception) {
+            isLoading = false
+            println("Error fetching notifications: ${e.message}")
+            DialogState.dialogVisible = true
+            DialogState.dialogTitle = "Uh oh..."
+            DialogState.dialogDescription = "Failed to load notifications. That's not great.\n\nError: ${e.message}"
+            // Call on dismiss to close the notification screen
+            onDismiss()
+        }
     }
 
     Box(
@@ -658,7 +682,7 @@ fun NotificationScreen(onDismiss: () -> Unit, token: String) {
                 }
 
                 item {
-                    CompactButton(
+                    Button(
                         onClick = onDismiss,
                         label = { Text("Close") },
                         colors = ButtonDefaults.buttonColors(

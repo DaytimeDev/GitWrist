@@ -21,6 +21,9 @@ This project is made using [Jetpack Compose](https://developer.android.com/compo
 
 Right now the app does not show private repos since `read-only` access doesn't seem possible, which for security we will not allow the app to have write access
 
+### ⚠️ Warning, this project is in alpha and has errors, which are being actively worked on.
+### ⚠️ It is not recommended to use this app yet.
+
 ## Installation ⤵️
 > This guide will show you how to use the terminal to install to a device -> `Windows`
 
@@ -29,10 +32,11 @@ Right now the app does not show private repos since `read-only` access doesn't s
 ### 1. Install ADB 
 If you do not have ADB (Android Debug Bridge), install it here: [Android Debug Bridge](https://developer.android.com/tools/adb)
 
-Then you should be able to access it in the CLI, if not, try changing to the ADB directory, it can often be found in `C:\Users\example-user\AppData\Local\Android\Sdk\platform-tools` and use `./adb` rather than `adb` (as long as its in the directory).
+If you want to access ADB from anywhere, add the directory to your System Environment PATH Variables, which you can do here: [ADB-Path-Setup](https://theflutterist.medium.com/setting-up-adb-path-on-windows-android-tips-5b5cdaa9084b)
+Then you should be able to access it in the CLI, if not, try using `cd` on the ADB directory, it can often be found in `C:\Users\example-user\AppData\Local\Android\Sdk\platform-tools` and use `./adb` rather than `adb` (as long as its in the directory).
 
 ### 2. Install the latest stable release
-Download the APK file from: [GitWear/Releases](https://github.com/DaytimeDev/GitWrist/releases)
+Download the APK file from: [GitWrist/Releases](https://github.com/DaytimeDev/GitWrist/releases)
 
 
 ### 3. Enable Wireless / USB Debugging
@@ -56,8 +60,8 @@ if you can plug into your PC, use USB Debugging, otherwise just use Wireless *(M
 * Then check the device is connected by using `adb devices` and it should appear.
 
 ### 4. Install the app
-* In the terminal, use the command `./adb install  [your new apk location].apk`
+* In the terminal, use the command `adb install  [your new apk location].apk`
 
 
 ## Bonus: Updating the app ⤴️
-* If there is a newer version of the APK, complete steps 1, 2 and 3, then run the command `./adb install -r [your new apk location].apk`, this will update it but keep your data, if you want to use a custom flag on the install check out [ADB Install Commands](https://adbshell.com/commands/adb-install)
+* If there is a newer version of the APK, complete steps 1, 2 and 3, then run the command `adb install -r [your new apk location].apk`, this will update it but keep your data, if you want to use a custom flag on the install check out [ADB Install Commands](https://adbshell.com/commands/adb-install)
