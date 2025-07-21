@@ -40,7 +40,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Composable
-fun NotificationScreen(onDismiss: () -> Unit, token: String) {
+fun NotificationScreen(token: String) {
 
     var notifications: List<GitHubNotification> by remember { mutableStateOf(emptyList<GitHubNotification>()) }
     var isLoading by remember { mutableStateOf(true) }
@@ -199,17 +199,6 @@ fun NotificationScreen(onDismiss: () -> Unit, token: String) {
                             }
                         }
                     }
-                }
-
-                item {
-                    Button(
-                        onClick = onDismiss,
-                        label = { Text("Close") },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
-                        )
-                    )
                 }
             }
             ScrollIndicator(

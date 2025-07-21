@@ -197,7 +197,6 @@ fun HomeScreen(
                         .background(Color.Black)
                 ) {
                     NotificationScreen(
-                        onDismiss = { navController.navigateUp() },
                         token = token,
                     )
                 }
