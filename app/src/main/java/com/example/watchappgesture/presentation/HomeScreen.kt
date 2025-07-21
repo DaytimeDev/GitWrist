@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -30,7 +32,9 @@ import androidx.wear.compose.material3.AppScaffold
 import androidx.wear.compose.material3.ButtonDefaults
 import androidx.wear.compose.material3.CompactButton
 import androidx.wear.compose.material3.EdgeButton
+import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.OutlinedButton
 import androidx.wear.compose.material3.ScrollIndicator
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
@@ -39,6 +43,8 @@ import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import coil.compose.AsyncImage
 import com.example.watchappgesture.presentation.Github.GitHubUser
 import com.example.watchappgesture.presentation.Github.QRPreview
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -46,7 +52,8 @@ import java.util.Locale
 fun HomeScreen(
     userInfo: GitHubUser?,
     token: String,
-    context: Context
+    context: Context,
+    themeColor: Color = MaterialTheme.colorScheme.primary
 ) {
 
 
@@ -118,6 +125,37 @@ fun HomeScreen(
                             onClick = { navController.navigate("notification_screen") },
                             label = { Text("Notifications") },
                         )
+                    }
+                    item {
+                        Spacer(modifier = Modifier.size(8.dp))
+                    }
+                    item {
+                        OutlinedButton(
+                            onClick = { navController.navigate("repos_screen") },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.outlinedButtonColors(),
+                            border = ButtonDefaults.outlinedButtonBorder(enabled = true)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Start,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = com.example.watchappgesture.R.drawable.repos),
+                                    contentDescription = "Repos Icon",
+                                    modifier = Modifier.size(25.dp),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                                Spacer(modifier = Modifier.size(10.dp))
+                                Text(
+                                    text = "My Repos",
+                                    textAlign = TextAlign.Center,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
+                        }
                     }
                     item {
                         Spacer(modifier = Modifier.size(8.dp))
@@ -222,6 +260,30 @@ fun HomeScreen(
             composable("settings_screen")
             {
                 SettingsScreen(context)
+            }
+
+            composable("repos_screen")
+            {
+                Repos(
+                    context, themeColor, token, { navController.navigateUp() },
+                    onRepoClick = { repoFullName ->
+                        val encoded =
+                            URLEncoder.encode(repoFullName, StandardCharsets.UTF_8.toString())
+                        navController.navigate("repo_details/$encoded")
+                        // Encode so the / in the repo name doesn't break the composable navigation
+                    }
+                )
+            }
+
+            composable("repo_details/{repoFullName}") { backStackEntry ->
+                val encodedRepoFullName = backStackEntry.arguments?.getString("repoFullName")
+                val repoFullName = java.net.URLDecoder.decode(encodedRepoFullName ?: "", "UTF-8")
+                RepoDetailsScreen(
+                    repoFullName = repoFullName,
+                    context = context,
+                    token = token,
+                    onBack = { navController.navigateUp() } // Navigate back to the repos screen
+                )
             }
         }
     }

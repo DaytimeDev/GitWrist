@@ -95,6 +95,32 @@ suspend fun markNotificationAsRead(token: String, notificationId: String) {
 }
 
 
+suspend fun getRepositories(token: String): List<GitHubRepository> {
+    val client = OkHttpClient()
+
+    val request = Request.Builder()
+        .url("https://api.github.com/user/repos")
+        .header("Authorization", "Bearer $token")
+        .build()
+
+    return withContext(Dispatchers.IO) {
+        client.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) throw Exception("Unexpected code $response")
+
+            val body = response.body?.string()
+                ?: throw Exception("Empty body")
+
+            val moshi = Moshi.Builder()
+                .add(KotlinJsonAdapterFactory())
+                .build()
+
+            val adapter = moshi.adapter<List<GitHubRepository>>(Types.newParameterizedType(List::class.java, GitHubRepository::class.java))
+            adapter.fromJson(body) ?: throw Exception("Failed to parse JSON")
+        }
+    }
+}
+
+
 fun generateQrCode(content: String?, size: Int = 512, colorHex: String = "#FFFFFF"): Bitmap {
     val bitMatrix: BitMatrix = MultiFormatWriter().encode(
         content,

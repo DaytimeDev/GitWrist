@@ -150,7 +150,7 @@ fun App() {
             }
 
             else -> {
-                MainScreen(accessToken!!, context)
+                MainScreen(accessToken!!, context, themeColor)
             }
         }
 
@@ -193,7 +193,7 @@ fun restartApp(context: Context) {
 }
 
 @Composable
-fun MainScreen(token: String, context: Context) {
+fun MainScreen(token: String, context: Context, themeColor: Color) {
     var userInfo by remember { mutableStateOf<GitHubUser?>(null) }
 
     LaunchedEffect(token) {
@@ -252,9 +252,10 @@ fun MainScreen(token: String, context: Context) {
             }
         } else {
             HomeScreen(
-                userInfo = userInfo,
-                token = token,
-                context
+                userInfo,
+                token,
+                context,
+                themeColor
             )
         }
     }
