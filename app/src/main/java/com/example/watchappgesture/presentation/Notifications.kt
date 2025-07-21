@@ -58,8 +58,6 @@ fun NotificationScreen(token: String) {
             DialogState.dialogTitle = "Uh oh..."
             DialogState.dialogDescription =
                 "Failed to load notifications. That's not great.\n\nError: ${e.message}"
-            // Call on dismiss to close the notification screen
-            onDismiss()
         }
     }
 
