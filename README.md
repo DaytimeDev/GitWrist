@@ -1,4 +1,3 @@
-
 # GitWrist ⌚
 
 Meet GitWrist, a project for WearOS which allows devices to interact with the GitHub API to get information such as the users recent notifications and stats.
@@ -21,8 +20,7 @@ This project is made using [Jetpack Compose](https://developer.android.com/compo
 
 Right now the app does not show private repos since `read-only` access doesn't seem possible, which for security we will not allow the app to have write access
 
-### ⚠️ Warning, this project is in alpha and has errors, which are being actively worked on.
-### ⚠️ It is not recommended to use this app yet.
+### ⚠️ Warning, this project is in alpha and could encounter errors, please report any you find.
 
 ## Installation ⤵️
 > This guide will show you how to use the terminal to install to a device -> `Windows`

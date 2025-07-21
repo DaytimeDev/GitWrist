@@ -57,6 +57,7 @@ dependencies {
     implementation(libs.compose.material3.v100alpha05)
     implementation(libs.room.common.jvm)
     implementation(libs.wear.remote.interactions)
+    implementation(libs.compose.navigation)
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.ui.tooling)

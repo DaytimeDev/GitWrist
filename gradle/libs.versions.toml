@@ -13,6 +13,7 @@ material3Android = "1.3.2"
 composeMaterial3 = "1.5.0-beta05"
 roomCommonJvm = "2.7.2"
 wearRemoteInteractions = "1.1.0"
+composeNavigation = "1.4.1"
 
 [libraries]
 compose-material3-v100alpha05 = { module = "androidx.wear.compose:compose-material3", version.ref = "composeMaterial3Version" }
@@ -33,6 +34,7 @@ material3-android = { group = "androidx.compose.material3", name = "material3-an
 compose-material3 = { group = "androidx.wear.compose", name = "compose-material3", version.ref = "composeMaterial3" }
 room-common-jvm = { group = "androidx.room", name = "room-common-jvm", version.ref = "roomCommonJvm" }
 wear-remote-interactions = { group = "androidx.wear", name = "wear-remote-interactions", version.ref = "wearRemoteInteractions" }
+compose-navigation = { group = "androidx.wear.compose", name = "compose-navigation", version.ref = "composeNavigation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

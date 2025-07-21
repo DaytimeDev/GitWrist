@@ -7,10 +7,8 @@ package com.example.watchappgesture.presentation
 
 //noinspection SuspiciousImport
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
@@ -18,7 +16,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresPermission
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -29,7 +26,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -40,8 +36,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.graphics.createBitmap
-import androidx.core.graphics.set
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
@@ -53,18 +47,19 @@ import androidx.wear.compose.foundation.CurvedLayout
 import androidx.wear.compose.foundation.CurvedModifier
 import androidx.wear.compose.foundation.background
 import androidx.wear.compose.foundation.curvedRow
-import androidx.wear.compose.foundation.padding
 import androidx.wear.compose.foundation.sizeIn
+import androidx.wear.compose.material3.AppScaffold
+import androidx.wear.compose.material3.Button
 import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.TimeText
 import androidx.wear.compose.material3.curvedText
-import coil.compose.AsyncImage
+import androidx.wear.compose.navigation.SwipeDismissableNavHost
+import androidx.wear.compose.navigation.composable
+import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.example.watchappgesture.presentation.Github.GitHubUser
 import com.example.watchappgesture.presentation.Github.SetUp
 import com.example.watchappgesture.presentation.Github.getUserInfo
-import com.google.zxing.BarcodeFormat
-import com.google.zxing.MultiFormatWriter
-import com.google.zxing.common.BitMatrix
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
@@ -80,11 +75,10 @@ class MainActivity : ComponentActivity() {
 
 
         setContent {
-            WearApp()
+            App()
         }
     }
 }
-
 
 val Context.dataStore by preferencesDataStore(name = "settings")
 
@@ -131,7 +125,7 @@ val primaryColorHex = 0xFF00FA9A
     backgroundColor = 0xFF4CAF50
 )
 @Composable
-fun WearApp() {
+fun App() {
     val context = LocalContext.current
     var accessToken by remember { mutableStateOf<String?>(null) }
 
@@ -171,7 +165,6 @@ fun WearApp() {
             }
         }
 
-        TimeText()
         val versionName = context.packageManager
             .getPackageInfo(context.packageName, 0).versionName
 
