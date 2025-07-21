@@ -44,6 +44,7 @@ fun NotificationScreen(token: String) {
 
     var notifications: List<GitHubNotification> by remember { mutableStateOf(emptyList<GitHubNotification>()) }
     var isLoading by remember { mutableStateOf(true) }
+    val notificationListState = rememberScalingLazyListState()
 
     LaunchedEffect(Unit) {
         try {
@@ -85,7 +86,6 @@ fun NotificationScreen(token: String) {
                 )
             }
         } else {
-            val notificationListState = rememberScalingLazyListState()
             ScalingLazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,

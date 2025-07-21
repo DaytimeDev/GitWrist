@@ -76,7 +76,7 @@ fun HomeScreen(
                         modifier = Modifier.fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         state = listState,
-                        userScrollEnabled = true, // Stop scrolling when notifications or QR are visible
+                        userScrollEnabled = true,
                     ) {
                         item {
                             AsyncImage(
@@ -191,15 +191,9 @@ fun HomeScreen(
 
             composable("notification_screen")
             {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Black)
-                ) {
-                    NotificationScreen(
-                        token = token,
-                    )
-                }
+                NotificationScreen(
+                    token = token,
+                )
             }
 
             composable("qr_screen")
