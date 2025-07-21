@@ -1,22 +1,22 @@
 package com.example.watchappgesture.presentation.Github
 
 import android.graphics.Bitmap
+import android.graphics.Color
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.set
+import androidx.wear.compose.material3.MaterialTheme
 import coil.compose.AsyncImage
-import com.example.watchappgesture.presentation.primaryColorHex
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.common.BitMatrix
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -95,7 +95,7 @@ suspend fun markNotificationAsRead(token: String, notificationId: String) {
 }
 
 
-fun generateQrCode(content: String?, size: Int = 512): Bitmap {
+fun generateQrCode(content: String?, size: Int = 512, colorHex: String = "#FFFFFF"): Bitmap {
     val bitMatrix: BitMatrix = MultiFormatWriter().encode(
         content,
         BarcodeFormat.QR_CODE,
@@ -104,10 +104,11 @@ fun generateQrCode(content: String?, size: Int = 512): Bitmap {
     )
 
     val bmp = createBitmap(size, size, Bitmap.Config.RGB_565)
+    val colorInt = Color.parseColor(colorHex)
+
     for (x in 0 until size) {
         for (y in 0 until size) {
-            bmp[x, y] =
-                if (bitMatrix[x, y]) primaryColorHex.toInt() else android.graphics.Color.BLACK
+            bmp[x, y] = if (bitMatrix[x, y]) colorInt else Color.BLACK
         }
     }
     return bmp
@@ -116,8 +117,9 @@ fun generateQrCode(content: String?, size: Int = 512): Bitmap {
 
 @Composable
 fun QRPreview(url: String?, modifier: Modifier) {
+    val primaryColorToHexString = MaterialTheme.colorScheme.primary.toArgb().let { String.format("#%06X", 0xFFFFFF and it) }
     val qrCodeBitmap by produceState<Bitmap?>(initialValue = null, url) {
-        value = withContext(Dispatchers.Default) { generateQrCode(url, 512) }
+        value = withContext(Dispatchers.Default) { generateQrCode(url, 512, primaryColorToHexString) }
     }
     Box(
         modifier = modifier

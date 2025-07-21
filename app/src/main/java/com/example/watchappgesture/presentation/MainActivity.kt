@@ -33,7 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -48,15 +47,8 @@ import androidx.wear.compose.foundation.CurvedModifier
 import androidx.wear.compose.foundation.background
 import androidx.wear.compose.foundation.curvedRow
 import androidx.wear.compose.foundation.sizeIn
-import androidx.wear.compose.material3.AppScaffold
-import androidx.wear.compose.material3.Button
 import androidx.wear.compose.material3.MaterialTheme
-import androidx.wear.compose.material3.Text
-import androidx.wear.compose.material3.TimeText
 import androidx.wear.compose.material3.curvedText
-import androidx.wear.compose.navigation.SwipeDismissableNavHost
-import androidx.wear.compose.navigation.composable
-import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.example.watchappgesture.presentation.Github.GitHubUser
 import com.example.watchappgesture.presentation.Github.SetUp
 import com.example.watchappgesture.presentation.Github.getUserInfo
@@ -70,10 +62,7 @@ import java.io.IOException
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
-
         super.onCreate(savedInstanceState)
-
-
         setContent {
             App()
         }
@@ -93,15 +82,12 @@ suspend fun saveUserAccessToken(context: Context, token: String) {
 
 suspend fun getUserAccessToken(context: Context): String? {
     val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token")
-
     return context.dataStore.data
         .catch { exception ->
             if (exception is IOException) emit(emptyPreferences()) else throw exception
         }
-        .map { preferences ->
-            preferences[ACCESS_TOKEN_KEY]
-        }
-        .first() // Collect the first (and only) value
+        .map { preferences -> preferences[ACCESS_TOKEN_KEY] }
+        .first()
 }
 
 @RequiresPermission(Manifest.permission.ACCESS_NETWORK_STATE)
@@ -114,28 +100,30 @@ fun checkInternet(context: Context): Boolean {
     return networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
 }
 
-val primaryColorHex = 0xFF00FA9A
+suspend fun getUserThemeColor(context: Context): String {
+    val THEME_COLOR_KEY = stringPreferencesKey("theme_color")
+    return context.dataStore.data
+        .catch { exception ->
+            if (exception is IOException) emit(emptyPreferences()) else throw exception
+        }
+        .map { preferences -> preferences[THEME_COLOR_KEY] ?: "#00FA9A" }
+        .first()
+}
 
-
-@Preview(
-    device = "id:wearos_small_round",
-    name = "Pixel Watch",
-    showSystemUi = true,
-    showBackground = true,
-    backgroundColor = 0xFF4CAF50
-)
 @Composable
 fun App() {
     val context = LocalContext.current
     var accessToken by remember { mutableStateOf<String?>(null) }
+    var themeColor by remember { mutableStateOf(Color(0xFF00FA9A)) }
 
-
-    // Load access token on startup
+    // Load theme and token on startup
     LaunchedEffect(Unit) {
         accessToken = getUserAccessToken(context)
+        val hex = getUserThemeColor(context)
+        themeColor = Color(android.graphics.Color.parseColor(hex))
     }
 
-    // The dialog which can be called at any time for different things
+    // Dialog shown globally
     MessageDialog(
         visible = DialogState.dialogVisible,
         onDismiss = {
@@ -143,12 +131,13 @@ fun App() {
             DialogState.dialogVisible = false
         },
         title = DialogState.dialogTitle,
-        description = DialogState.dialogDescription
+        description = DialogState.dialogDescription,
+        themeColor = themeColor,
     )
 
     MaterialTheme(
         colorScheme = MaterialTheme.colorScheme.copy(
-            primary = Color(primaryColorHex),
+            primary = themeColor,
             onPrimary = Color.Black,
             onSurface = Color.White,
         ),
@@ -157,7 +146,7 @@ fun App() {
             accessToken.isNullOrEmpty() -> {
                 SetUp(context = context, onSignedIn = { token ->
                     accessToken = token
-                })
+                }, themeColor = themeColor)
             }
 
             else -> {
@@ -198,18 +187,14 @@ fun App() {
 fun restartApp(context: Context) {
     val packageManager = context.packageManager
     val intent = packageManager.getLaunchIntentForPackage(context.packageName)
-
     intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-
     context.startActivity(intent)
     Runtime.getRuntime().exit(0)
 }
 
-
 @Composable
 fun MainScreen(token: String, context: Context) {
     var userInfo by remember { mutableStateOf<GitHubUser?>(null) }
-    var shareAccountQR by remember { mutableStateOf(false) }
 
     LaunchedEffect(token) {
         if (!checkInternet(context)) {
@@ -222,9 +207,7 @@ fun MainScreen(token: String, context: Context) {
             return@LaunchedEffect
         }
         try {
-            // If the token is an empty string, we should not attempt to fetch user info
             val user = getUserInfo(token)
-            println("Processing token: $token")
             withContext(Dispatchers.Main) {
                 userInfo = user
             }
@@ -237,18 +220,14 @@ fun MainScreen(token: String, context: Context) {
                 errorMessage =
                     "We might have to sign you out...\n\nIf this persists, please contact us on GitHub.\n\n$errorMessage"
 
-                // Sign out the user
-                saveUserAccessToken(context, "") // Clear the access token
-
+                saveUserAccessToken(context, "")
 
                 DialogState.dialogDescription = errorMessage
                 DialogState.dialogOnDismiss = {
-                    println("User is dismissing the dialog, restarting app...")
                     DialogState.dialogVisible = false
                     restartApp(context)
                 }
             }
-            return@LaunchedEffect
         }
     }
 
@@ -274,11 +253,8 @@ fun MainScreen(token: String, context: Context) {
         } else {
             HomeScreen(
                 userInfo = userInfo,
-                shareAccountQR = shareAccountQR,
-                onToggleQR = {
-                    shareAccountQR = !shareAccountQR
-                },
-                token = token
+                token = token,
+                context
             )
         }
     }

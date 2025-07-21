@@ -29,6 +29,7 @@ fun MessageDialog(
     onDismiss: () -> Unit,
     title: String = "Title",
     description: String = "No description provided.",
+    themeColor: Color = Color(0xFF00FA9A)
 ) {
     AlertDialog(
         visible = visible,
@@ -44,7 +45,7 @@ fun MessageDialog(
             AlertDialogDefaults.DismissButton(
                 colors = androidx.wear.compose.material3.IconButtonDefaults.iconButtonColors(
                     contentColor = Color.Black,
-                    containerColor = Color(0xFF00FA9A)
+                    containerColor = themeColor
                 ),
                 onClick = onDismiss,
                 content = {

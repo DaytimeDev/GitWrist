@@ -1,12 +1,6 @@
 package com.example.watchappgesture.presentation.Github
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,12 +18,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.wear.compose.material3.Button
+import androidx.wear.compose.material3.ButtonDefaults
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
-import androidx.wear.remote.interactions.RemoteActivityHelper
 import com.example.watchappgesture.presentation.DialogState
 import com.example.watchappgesture.presentation.checkInternet
 import com.example.watchappgesture.presentation.saveUserAccessToken
@@ -42,7 +34,6 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.util.concurrent.Executors
 
 
 // Allow the user to sign in with github by opening a link on their phone
@@ -140,7 +131,7 @@ fun UserCodePreview(userCode: String, context: Context) {
             )
             Text(
                 text = "github.com/login/device",
-                color = Color(0xFF00FA9A),
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
             )
@@ -150,7 +141,7 @@ fun UserCodePreview(userCode: String, context: Context) {
 
 
 @Composable
-fun SetUp(context: Context, onSignedIn: (String) -> Unit) {
+fun SetUp(context: Context, onSignedIn: (String) -> Unit, themeColor: Color) {
     var userCode by remember { mutableStateOf("") }
     var deviceCode by remember { mutableStateOf("") }
     var isLoadingCode by remember { mutableStateOf(false) }
@@ -174,6 +165,12 @@ fun SetUp(context: Context, onSignedIn: (String) -> Unit) {
             }
             Button(
                 enabled = !isLoadingCode,
+                // Use the theme color
+                modifier = Modifier
+                    .padding(16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF1f1f1f),
+                ),
                 onClick = {
                     CoroutineScope(Dispatchers.IO).launch {
                         val hasInternet = checkInternet(context)
@@ -219,7 +216,7 @@ fun SetUp(context: Context, onSignedIn: (String) -> Unit) {
                 }) {
                 Text(
                     text = "Sign in with GitHub",
-                    color = MaterialTheme.colorScheme.onPrimary
+                    color = Color.White
                 )
             }
         }
