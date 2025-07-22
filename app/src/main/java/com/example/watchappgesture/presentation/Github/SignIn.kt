@@ -44,8 +44,7 @@ class SignIn(private val client: OkHttpClient = OkHttpClient()) {
 
     // Define what scopes the watch app needs
 
-    val scopes = "read:user,notifications"
-    // TODO Add notification reading usage
+    val scopes = "read:user,notifications,repo"
 
 
     suspend fun requestDeviceCode(): Pair<String?, String?> {

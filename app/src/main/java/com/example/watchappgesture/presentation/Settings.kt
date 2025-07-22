@@ -30,6 +30,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.ScalingLazyListAnchorType
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
+import androidx.wear.compose.material3.Button
 import androidx.wear.compose.material3.Text
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -136,6 +137,23 @@ fun SettingsScreen(context: Context) {
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(8.dp)
                 )
+            }
+
+            item {
+                Button(
+                    onClick = {
+                        // Set the token to blank and restart the app
+                        scope.launch {
+                            saveUserAccessToken(context, "")
+                            restartApp(context)
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                ) {
+                    Text(text = "Sign Out", fontSize = 16.sp)
+                }
             }
         }
     }

@@ -121,10 +121,31 @@ fun HomeScreen(
                         )
                     }
                     item {
-                        CompactButton(
+                        OutlinedButton(
                             onClick = { navController.navigate("notification_screen") },
-                            label = { Text("Notifications") },
-                        )
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.outlinedButtonColors(),
+                            border = ButtonDefaults.outlinedButtonBorder(enabled = true)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Start,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = com.example.watchappgesture.R.drawable.ic_inbox),
+                                    contentDescription = "Inbox Icon",
+                                    modifier = Modifier.size(25.dp),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                                Text(
+                                    text = "Inbox",
+                                    textAlign = TextAlign.Center,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
+                        }
                     }
                     item {
                         Spacer(modifier = Modifier.size(8.dp))
@@ -282,7 +303,8 @@ fun HomeScreen(
                     repoFullName = repoFullName,
                     context = context,
                     token = token,
-                    onBack = { navController.navigateUp() } // Navigate back to the repos screen
+                    onBack = { navController.navigateUp() },
+                    themeColor = themeColor
                 )
             }
         }
