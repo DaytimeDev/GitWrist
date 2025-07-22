@@ -21,6 +21,8 @@ This project is made using [Jetpack Compose](https://developer.android.com/compo
 
 [Check out the Changelog Here](CHANGELOG.md)
 
+<a href="https://www.producthunt.com/products/gitwrist?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-gitwrist" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=996146&theme=dark&t=1753186132774" alt="GitWrist - Link&#0032;everything&#0032;important&#0032;GitHub&#0032;related&#0032;to&#0032;your&#0032;wrist | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+
 
 Right now private repos *are* shown but this requires extra permissions since readonly isn't possible with github; visibility subject to change
 
