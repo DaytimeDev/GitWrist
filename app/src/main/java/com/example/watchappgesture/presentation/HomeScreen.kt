@@ -138,6 +138,7 @@ fun HomeScreen(
                                     modifier = Modifier.size(25.dp),
                                     tint = MaterialTheme.colorScheme.primary
                                 )
+                                Spacer(modifier = Modifier.size(10.dp))
                                 Text(
                                     text = "Inbox",
                                     textAlign = TextAlign.Center,
@@ -146,9 +147,6 @@ fun HomeScreen(
                                 )
                             }
                         }
-                    }
-                    item {
-                        Spacer(modifier = Modifier.size(8.dp))
                     }
                     item {
                         OutlinedButton(

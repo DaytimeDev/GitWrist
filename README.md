@@ -21,7 +21,9 @@ This project is made using [Jetpack Compose](https://developer.android.com/compo
 
 [Check out the Changelog Here](CHANGELOG.md)
 
-Right now the app does not show private repos since `read-only` access doesn't seem possible, which for security we will not allow the app to have write access
+
+Right now private repos *are* shown but this requires extra permissions since readonly isn't possible with github; visibility subject to change
+
 
 ### ⚠️ Warning, this project is in alpha and could encounter errors, please report any you find.
 
