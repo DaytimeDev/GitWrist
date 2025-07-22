@@ -146,13 +146,13 @@ fun Repos(
                     )
                 )
             }
-            item {
-                Text(
-                    text = "Only public repos are being shown since extra " + "permissions are required to access private repos.",
-                    color = Color.LightGray,
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
+//            item {
+//                Text(
+//                    text = "Only public repos are being shown since extra " + "permissions are required to access private repos.",
+//                    color = Color.LightGray,
+//                    style = MaterialTheme.typography.bodySmall,
+//                )
+//            }
         }
     }
     ScrollIndicator(
