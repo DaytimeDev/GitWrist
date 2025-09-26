@@ -32,7 +32,6 @@ Right now private repos *are* shown but this requires extra permissions since re
 ## Installation ⤵️
 > This guide will show you how to use the terminal to install to a device -> `Windows`
 
-* Please note this has only been tested on the `Pixel Watch 2` but should be compatible with other WearOS devices.
 * ⚠️ Install steps vary from device to device, the steps given are relatively general but depending on the device that you use to instal on. The steps can become more complicated
 
 ### 1. Install ADB 
